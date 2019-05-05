@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset=utf-8 />
+    <title>School Enrollment in Philadelphia</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+    <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+    <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: whitesmoke;
+            font-family: Lato, sans-serif;
+            color: #0D0000;
+        }
+        header {
+            padding: 6px 10%;
+        }
+        h1 {
+            display: inline-block;
+            margin-right: 20px;
+            color: maroon;
+        }
+        h2 {
+            display: inline-block;
+            color: #001323;
+        }
+        
+        set {
+            color: darkolivegreen;
+            font-size: 1.5 em;
+        }
+        #map {
+            width: 80%;
+            height: 540px;
+            margin: 30px auto;
+        }
+        footer {
+            padding: 6px 10%;
+            width: 80%;
+        }
+        p {
+            font-size: 1em;
+            color: #001323;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Web mapping final</h1><br>
+        <set>by Jared Dobkin</set>
+    </header>
+
+    <div id='map'></div>
+    
+
+    <footer>
+        <p><i>Map authored by Jared Dobkin.</i></p>
+        <p>This map shows the location of schools in Philadelphia, and groups them into three classes based on their enrollment (high, med, and low). To see the name of each school and the number of students they had enrolled as of April 2017, click on the circle of interest. The schools data was downloaded from the Open Data Philly website <a href = https://www.opendataphilly.org/dataset/schools > here. </a> </p>
+    </footer>
+
+    <script type="text/javascript" src="nepSitesInOrder.js"></script>
+    <script type="text/javascript" src="schools.js"></script>
+    <script type="text/javascript" src="fMarket.js"></script>
+    <script type="text/javascript" src="https://wanderdrone.appspot.com/"></script>
+    <script type="text/javascript" src="realTime.js"></script>
+    <script type="text/javascript" src="realTime.min.js"></script>
+
+
+
+    <script>
+
+      var map = L.map('map', {
+          center: [40.01,-75.09],
+          zoom: 11,
+      });
+      
+      var tiles = L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+          attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+          subdomains: 'abcd',
+          maxZoom: 19
+      });  
+      
+      tiles.addTo(map);
+       
+        L.geoJson(schools, {
+          pointToLayer: function(feature,latlng) {
+              
+              console.log(feature.properties)
+              
+              return L.circleMarker(latlng, {
+                 color: 'blue',
+                 weight: .1,
+                 fillColor: 'blue',
+                 fillOpacity: .3,
+                 setRadius: 2
+              });   
+          },
+         
+    onEachFeature : function(feature,layer) {
+    layer.on('mouseover', function() {
+    layer.setStyle({
+        fillColor: 'red',
+        fillOpacity: 0.5
+    });
+});
+layer.on('mouseout', function() {
+    layer.setStyle({
+        fillColor: 'yellow',
+        fillOpacity: 0.5
+    });
+});
+
+          
+          var name = feature.properties.FACIL_NAME
+          
+      
+                                                
+          
+          var popup = ("<b>"+name+"</b><br>")
+                       layer.bindPopup(popup)
+          }
+          
+          
+      }).addTo(map);    
+        sites.features.sort(function(a, b) {
+    return a.properties.Agency_Nam - a.geometry.coordinates;  
+});
+    
+      L.geoJson(sites, {
+          pointToLayer: function(feature,latlng) {
+              
+              console.log(feature.properties)
+              
+              return L.circleMarker(latlng, {
+                 color: 'white',
+                 weight: 1,
+                 fillColor: 'orange',
+                 fillOpacity: 1
+              });   
+          },
+         
+    onEachFeature : function(feature,layer) {
+    layer.on('mouseover', function() {
+    layer.setStyle({
+        fillColor: 'red',
+        fillOpacity: 0.5
+    });
+});
+layer.on('mouseout', function() {
+    layer.setStyle({
+        fillColor: 'yellow',
+        fillOpacity: 0.5
+    });
+});
+
+          
+          var name = feature.properties.Agency_Nam
+          
+      
+                                                
+          
+          var popup = ("<b>"+name+"</b><br>")
+                       layer.bindPopup(popup)
+          }
+          
+          
+      }).addTo(map);
+    L.geoJson(fMarket, {
+          pointToLayer: function(feature,latlng) {
+              
+              console.log(feature.properties)
+              
+              return L.circleMarker(latlng, {
+                 color: 'black',
+                 weight: 1,
+                 fillColor: 'red',
+                 fillOpacity: 1
+              });   
+          },
+         
+    onEachFeature : function(feature,layer) {
+    layer.on('mouseover', function() {
+    layer.setStyle({
+        fillColor: 'red',
+        fillOpacity: 0.5
+    });
+});
+layer.on('mouseout', function() {
+    layer.setStyle({
+        fillColor: 'yellow',
+        fillOpacity: 0.5
+    });
+});
+
+          
+          var day = feature.properties.DAY
+          var time= feature.properties.TIME
+          
+      
+                                                
+          
+          var popup = ("<b>"+day+time+"</b><br>")
+                       layer.bindPopup(popup)
+          }
+          
+          
+      }).addTo(map);
+/*function createRealtimeLayer(url, container) {
+    return L.realtime(url, {
+        interval: 60 * 1000,
+        getFeatureId: function(f) {
+            return f.properties.url;
+        },
+        cache: true,
+        container: container,
+        onEachFeature(f, l) {
+            l.bindPopup(function() {
+                return "yay"
+            });
+        }
+    });
+}
+
+var realtime1 = createRealtimeLayer('https://wanderdrone.appspot.com/').addTo(map)*/
+
+navigator.geolocation.getCurrentPosition(function(position){
+    var dis = ((Math.abs(position.coords.latitude)-Math.abs(-75.1437876))) + ((Math.abs(position.coords.longitude)-Math.abs(40.016501)))
+        console.log("dis", Math.abs(dis*69))
+        alert("youre are "+Math.abs(dis*69)+" miles from Share Food Program"
+            )
+        }                                               
+); 
+var sourcesLayers = {
+   "<b style='color:#55DF07'>School distribution sites</b>": sites,
+    "<b style='color:#ff9999'>Farmers Market</b>": fMarket,
+    "<b style='color:#ff9999'>Other Schools</b>": schools,
+    "<b style='color:#ff9999'>Wander Drone</b>": drone
+}
+
+L.control.layers(null, sourcesLayers, { collapsed:true }).addTo(map);        
+        
+  
+/*navigator.geolocation.getCurrentPosition(function(position) {
+
+        var ulatitude = position.coords.latitude;
+        var ulongitude = position.coords.longitude;
+        var ualtitude = position.coords.altitude;
+        var uaccuracy = position.coords.accuracy;
+        var ualtitudeAccuracy = position.coords.altitudeAccuracy;
+        var uheading = position.coords.height;
+        var uspeed = position.coords.speed;
+        var utimestamp = position.timestamp; 
+    }
+);   
+
+var distance = dist
+    for (i = 0; i < sites.features.properties.Agency_Nam.length; i++) {
+        var dist = Math.round(userC.distanceTo(sites.features.geometry.coordinates))
+    }
+    return dist */  
+        
+
+weather();
+        console.log(weather, data)
+console.log(latitude, longitude)
+
+
+
+        </script>
+    
+</body>
+
+</html>
